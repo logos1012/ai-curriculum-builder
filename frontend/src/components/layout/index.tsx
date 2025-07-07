@@ -7,6 +7,7 @@ import { Footer } from './Footer';
 import { ConnectionStatus } from '@/components/system/ConnectionStatus';
 import { GlobalErrorBoundary } from '@/components/system/GlobalErrorBoundary';
 import { EnvironmentCheck } from '@/components/system/EnvironmentCheck';
+import { ToastProvider } from '@/components/ui/Toast';
 import { useAuthStore } from '@/store/authStore';
 
 interface LayoutProps {
@@ -28,15 +29,17 @@ export function Layout({ children }: LayoutProps) {
 
   return (
     <GlobalErrorBoundary>
-      <div className="min-h-screen flex flex-col bg-gray-50">
-        <Header />
-        <main className="flex-1">
-          {children}
-        </main>
-        <Footer />
-        <ConnectionStatus />
-        <EnvironmentCheck />
-      </div>
+      <ToastProvider>
+        <div className="min-h-screen flex flex-col bg-gray-50">
+          <Header />
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
+          <ConnectionStatus />
+          <EnvironmentCheck />
+        </div>
+      </ToastProvider>
     </GlobalErrorBoundary>
   );
 }

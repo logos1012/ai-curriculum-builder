@@ -9,13 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.56.0",
+    "@supabase/supabase-js": "^2.50.3",
     "@types/lodash": "^4.17.20",
+    "clsx": "^2.1.1",
     "lodash": "^4.17.21",
     "next": "15.3.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "socket.io-client": "^4.8.1",
-    "zod": "^3.25.75"
+    "tailwind-merge": "^3.3.1",
+    "zod": "^3.25.75",
+    "zustand": "^5.0.6"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

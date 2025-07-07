@@ -5,10 +5,10 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Layout } from '@/components/layout';
 import { Button, Input, Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
-import { useAuthStore } from '@/store/authStore';
 import { useToast } from '@/components/ui';
+import { useAuthStore } from '@/store/authStore';
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
   const { success, error } = useToast();
   const { user, isInitialized, isLoading, signIn } = useAuthStore();
@@ -67,8 +67,7 @@ export default function LoginPage() {
   }
 
   return (
-    <Layout>
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -152,7 +151,14 @@ export default function LoginPage() {
             </CardContent>
           </Card>
         </div>
-      </div>
+    </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Layout>
+      <LoginContent />
     </Layout>
   );
 }

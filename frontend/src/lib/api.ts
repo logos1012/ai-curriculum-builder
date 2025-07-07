@@ -1,7 +1,7 @@
 import { supabase } from './supabase';
 
 // API 기본 설정
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 // API 응답 타입
 interface ApiResponse<T = any> {
@@ -58,11 +58,17 @@ class ApiClient {
     };
 
     try {
-      const response = await fetch(`${this.baseURL}${endpoint}`, config);
+      const response = await fetch(`${this.baseURL}/api${endpoint}`, config);
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error?.message || 'API request failed');
+        console.error('API request failed:', {
+          url: `${this.baseURL}/api${endpoint}`,
+          status: response.status,
+          statusText: response.statusText,
+          data
+        });
+        throw new Error(data.error?.message || `API request failed: ${response.status} ${response.statusText}`);
       }
 
       return data;

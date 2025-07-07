@@ -9,7 +9,7 @@ import { useAuthStore } from '@/store/authStore';
 import { useCurriculumStore } from '@/store/curriculumStore';
 import { useToast } from '@/components/ui';
 
-export default function Dashboard() {
+function DashboardContent() {
   const router = useRouter();
   const { success, error } = useToast();
   const { user, isInitialized } = useAuthStore();
@@ -67,11 +67,15 @@ export default function Dashboard() {
     try {
       const result = await createCurriculum({
         title: template.title,
-        description: template.description,
-        content: template.content,
-        type: template.type,
-        target_audience: template.targetAudience,
-        duration: template.duration
+        content: {
+          summary: template.description || '',
+          objectives: [],
+          chapters: [],
+          resources: []
+        },
+        type: template.type || 'online',
+        target_audience: template.targetAudience || '',
+        duration: template.duration || ''
       });
       
       if (result.success && result.id) {
@@ -123,7 +127,7 @@ export default function Dashboard() {
   }
 
   return (
-    <Layout>
+    <>
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8">
           {/* Header */}
@@ -162,7 +166,7 @@ export default function Dashboard() {
               <p className="text-gray-600 mb-4">
                 AI와 함께 첫 번째 커리큘럼을 만들어보세요
               </p>
-              <div className="flex space-x-3">
+              <div className="flex justify-center space-x-3">
                 <Button onClick={handleCreateNew}>
                   새 커리큘럼 만들기
                 </Button>
@@ -187,13 +191,20 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Template Library Modal */}
       {showTemplateLibrary && (
         <TemplateLibrary
           onSelectTemplate={handleSelectTemplate}
           onClose={() => setShowTemplateLibrary(false)}
         />
       )}
+    </>
+  );
+}
+
+export default function Dashboard() {
+  return (
+    <Layout>
+      <DashboardContent />
     </Layout>
   );
 }

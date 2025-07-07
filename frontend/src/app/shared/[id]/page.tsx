@@ -8,7 +8,7 @@ import { CurriculumPreview } from '@/components/curriculum';
 import { curriculumApi } from '@/lib/api';
 import { useToast } from '@/components/ui';
 
-export default function SharedCurriculumPage() {
+function SharedCurriculumContent() {
   const params = useParams();
   const router = useRouter();
   const shareId = params.id as string;
@@ -117,18 +117,15 @@ ${curriculum.content || '내용이 없습니다.'}
 
   if (isLoading) {
     return (
-      <Layout>
-        <div className="min-h-screen flex items-center justify-center">
-          <LoadingSpinner size="lg" />
-        </div>
-      </Layout>
+      <div className="min-h-screen flex items-center justify-center">
+        <LoadingSpinner size="lg" />
+      </div>
     );
   }
 
   if (needsPassword) {
     return (
-      <Layout>
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
           <Card className="w-full max-w-md">
             <CardContent className="p-8">
               <div className="text-center mb-6">
@@ -156,35 +153,31 @@ ${curriculum.content || '내용이 없습니다.'}
               </form>
             </CardContent>
           </Card>
-        </div>
-      </Layout>
+      </div>
     );
   }
 
   if (!curriculum) {
     return (
-      <Layout>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <div className="text-4xl mb-4">😕</div>
-            <h1 className="text-xl font-semibold text-gray-900 mb-2">
-              커리큘럼을 찾을 수 없습니다
-            </h1>
-            <p className="text-gray-600 mb-4">
-              공유 링크가 잘못되었거나 만료되었습니다
-            </p>
-            <Button onClick={() => router.push('/')}>
-              홈으로 이동
-            </Button>
-          </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-4xl mb-4">😕</div>
+          <h1 className="text-xl font-semibold text-gray-900 mb-2">
+            커리큘럼을 찾을 수 없습니다
+          </h1>
+          <p className="text-gray-600 mb-4">
+            공유 링크가 잘못되었거나 만료되었습니다
+          </p>
+          <Button onClick={() => router.push('/')}>
+            홈으로 이동
+          </Button>
         </div>
-      </Layout>
+      </div>
     );
   }
 
   return (
-    <Layout>
-      <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
         {/* Header */}
         <div className="bg-white border-b">
           <div className="container mx-auto px-4 py-4">
@@ -247,6 +240,13 @@ ${curriculum.content || '내용이 없습니다.'}
           </div>
         </div>
       </div>
+  );
+}
+
+export default function SharedCurriculumPage() {
+  return (
+    <Layout>
+      <SharedCurriculumContent />
     </Layout>
   );
 }

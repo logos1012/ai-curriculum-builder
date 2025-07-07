@@ -87,20 +87,68 @@ export function CurriculumPreview({
     onContentEdit?.(newContent);
   };
 
-  const formatContent = (content: string) => {
+  const formatContent = (content: any) => {
     if (!content) return '';
     
-    // 간단한 마크다운 렌더링
-    return content
-      .replace(/^### (.*$)/gim, '<h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">$1</h3>')
-      .replace(/^## (.*$)/gim, '<h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">$1</h2>')
-      .replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold text-gray-900 mt-8 mb-4">$1</h1>')
-      .replace(/^\* (.*$)/gim, '<li class="ml-4 mb-1">$1</li>')
-      .replace(/^- (.*$)/gim, '<li class="ml-4 mb-1">$1</li>')
-      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>')
-      .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
-      .replace(/\n\n/g, '</p><p class="mb-4">')
-      .replace(/\n/g, '<br/>');
+    // content가 객체인 경우 처리
+    if (typeof content === 'object') {
+      let html = '';
+      
+      // summary가 있는 경우
+      if (content.summary) {
+        html += `<div class="mb-6"><h2 class="text-xl font-semibold text-gray-900 mb-3">개요</h2><p class="text-gray-800">${content.summary}</p></div>`;
+      }
+      
+      // objectives가 있는 경우
+      if (content.objectives && content.objectives.length > 0) {
+        html += `<div class="mb-6"><h2 class="text-xl font-semibold text-gray-900 mb-3">학습 목표</h2><ul class="list-disc list-inside space-y-1">`;
+        content.objectives.forEach((obj: string) => {
+          html += `<li class="text-gray-800">${obj}</li>`;
+        });
+        html += `</ul></div>`;
+      }
+      
+      // chapters가 있는 경우
+      if (content.chapters && content.chapters.length > 0) {
+        html += `<div class="mb-6"><h2 class="text-xl font-semibold text-gray-900 mb-3">커리큘럼 구성</h2>`;
+        content.chapters.forEach((chapter: any, index: number) => {
+          html += `<div class="mb-4 p-4 bg-gray-50 rounded-lg">
+            <h3 class="text-lg font-medium text-gray-900 mb-2">${index + 1}. ${chapter.title || `Chapter ${index + 1}`}</h3>
+            <p class="text-gray-700">${chapter.description || chapter.content || ''}</p>
+            ${chapter.duration ? `<span class="text-sm text-gray-500">소요 시간: ${chapter.duration}</span>` : ''}
+          </div>`;
+        });
+        html += `</div>`;
+      }
+      
+      // resources가 있는 경우
+      if (content.resources && content.resources.length > 0) {
+        html += `<div class="mb-6"><h2 class="text-xl font-semibold text-gray-900 mb-3">참고 자료</h2><ul class="list-disc list-inside space-y-1">`;
+        content.resources.forEach((resource: any) => {
+          const resourceText = typeof resource === 'string' ? resource : resource.title || resource.name || '';
+          html += `<li class="text-gray-800">${resourceText}</li>`;
+        });
+        html += `</ul></div>`;
+      }
+      
+      return html || '<p class="text-gray-500">아직 내용이 없습니다.</p>';
+    }
+    
+    // content가 문자열인 경우 기존 마크다운 처리
+    if (typeof content === 'string') {
+      return content
+        .replace(/^### (.*$)/gim, '<h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">$1</h3>')
+        .replace(/^## (.*$)/gim, '<h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">$1</h2>')
+        .replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold text-gray-900 mt-8 mb-4">$1</h1>')
+        .replace(/^\* (.*$)/gim, '<li class="ml-4 mb-1">$1</li>')
+        .replace(/^- (.*$)/gim, '<li class="ml-4 mb-1">$1</li>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
+        .replace(/\n\n/g, '</p><p class="mb-4">')
+        .replace(/\n/g, '<br/>');
+    }
+    
+    return '';
   };
 
   const downloadAsMarkdown = () => {

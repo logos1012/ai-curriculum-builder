@@ -28,8 +28,12 @@ export default function BuilderPage() {
     try {
       const result = await createCurriculum({
         title: '새 커리큘럼',
-        description: '',
-        content: '',
+        content: {
+          summary: '',
+          objectives: [],
+          chapters: [],
+          resources: []
+        },
         type: 'online',
         target_audience: '',
         duration: ''
@@ -50,11 +54,15 @@ export default function BuilderPage() {
     try {
       const result = await createCurriculum({
         title: template.title,
-        description: template.description,
-        content: template.content,
-        type: template.type,
-        target_audience: template.targetAudience,
-        duration: template.duration
+        content: {
+          summary: template.description || '',
+          objectives: [],
+          chapters: [],
+          resources: []
+        },
+        type: template.type || 'online',
+        target_audience: template.targetAudience || '',
+        duration: template.duration || ''
       });
       
       if (result.success && result.id) {

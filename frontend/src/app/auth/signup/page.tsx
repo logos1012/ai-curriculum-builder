@@ -8,7 +8,7 @@ import { Button, Input, Card, CardHeader, CardTitle, CardContent } from '@/compo
 import { useAuthStore } from '@/store/authStore';
 import { useToast } from '@/components/ui';
 
-export default function SignupPage() {
+function SignupContent() {
   const router = useRouter();
   const { success, error } = useToast();
   const { user, isInitialized, isLoading, signUp } = useAuthStore();
@@ -83,8 +83,7 @@ export default function SignupPage() {
   }
 
   return (
-    <Layout>
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -201,6 +200,13 @@ export default function SignupPage() {
           </Card>
         </div>
       </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Layout>
+      <SignupContent />
     </Layout>
   );
 }
