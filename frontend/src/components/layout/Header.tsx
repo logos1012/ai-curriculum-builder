@@ -1,88 +1,158 @@
 'use client';
 
-import React from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui';
 import { useAuthStore } from '@/store/authStore';
+import { useToast } from '@/components/ui';
 
-const Header: React.FC = () => {
+export function Header() {
   const router = useRouter();
-  const { user, logout } = useAuthStore();
+  const { success } = useToast();
+  const { user, isInitialized, signOut } = useAuthStore();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const handleLogout = async () => {
-    await logout();
+  const handleSignOut = async () => {
+    await signOut();
+    success('로그아웃되었습니다');
     router.push('/');
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-      <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center space-x-4">
+    <header className="bg-white shadow-sm border-b">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center">
-              <span className="text-white font-bold text-lg">AI</span>
-            </div>
-            <span className="font-bold text-xl text-gray-900">
-              강의 커리큘럼 작성 도구
+            <div className="text-2xl">📚</div>
+            <span className="text-xl font-bold text-gray-900">
+              AI 커리큘럼 빌더
             </span>
           </Link>
-        </div>
 
-        <nav className="hidden md:flex items-center space-x-6">
-          {user ? (
-            <>
-              <Link 
-                href="/dashboard" 
-                className="text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                대시보드
-              </Link>
-              <Link 
-                href="/builder" 
-                className="text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                새 커리큘럼
-              </Link>
-              <div className="flex items-center space-x-3">
-                <div className="flex items-center space-x-2">
-                  <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
-                    <span className="text-blue-700 text-sm font-medium">
-                      {user.email?.[0]?.toUpperCase()}
-                    </span>
-                  </div>
-                  <span className="text-sm text-gray-700">{user.email}</span>
-                </div>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={handleLogout}
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-8">
+            {isInitialized && user ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  className="text-gray-700 hover:text-blue-600 transition-colors"
                 >
-                  로그아웃
-                </Button>
+                  대시보드
+                </Link>
+                <Link
+                  href="/builder"
+                  className="text-gray-700 hover:text-blue-600 transition-colors"
+                >
+                  새 커리큘럼
+                </Link>
+                <div className="flex items-center space-x-4">
+                  <span className="text-sm text-gray-600">
+                    {user.user_metadata?.name || user.email}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleSignOut}
+                  >
+                    로그아웃
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <div className="flex items-center space-x-4">
+                <Link
+                  href="/auth/login"
+                  className="text-gray-700 hover:text-blue-600 transition-colors"
+                >
+                  로그인
+                </Link>
+                <Link href="/auth/signup">
+                  <Button size="sm">회원가입</Button>
+                </Link>
               </div>
-            </>
-          ) : (
-            <Button 
-              onClick={() => router.push('/auth/login')}
-              size="sm"
-            >
-              로그인
-            </Button>
-          )}
-        </nav>
+            )}
+          </nav>
 
-        {/* Mobile menu button */}
-        <div className="md:hidden">
-          <Button variant="ghost" size="sm">
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          {/* Mobile menu button */}
+          <button
+            className="md:hidden p-2"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
+              />
             </svg>
-          </Button>
+          </button>
         </div>
+
+        {/* Mobile Navigation */}
+        {isMenuOpen && (
+          <div className="md:hidden py-4 border-t">
+            <nav className="flex flex-col space-y-4">
+              {isInitialized && user ? (
+                <>
+                  <Link
+                    href="/dashboard"
+                    className="text-gray-700 hover:text-blue-600 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    대시보드
+                  </Link>
+                  <Link
+                    href="/builder"
+                    className="text-gray-700 hover:text-blue-600 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    새 커리큘럼
+                  </Link>
+                  <div className="pt-4 border-t">
+                    <p className="text-sm text-gray-600 mb-2">
+                      {user.user_metadata?.name || user.email}
+                    </p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        handleSignOut();
+                        setIsMenuOpen(false);
+                      }}
+                    >
+                      로그아웃
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/auth/login"
+                    className="text-gray-700 hover:text-blue-600 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    로그인
+                  </Link>
+                  <Link
+                    href="/auth/signup"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Button size="sm" className="w-fit">회원가입</Button>
+                  </Link>
+                </>
+              )}
+            </nav>
+          </div>
+        )}
       </div>
     </header>
   );
-};
-
-export default Header;
+}

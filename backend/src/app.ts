@@ -3,12 +3,14 @@ import cors from 'cors'
 import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
 import dotenv from 'dotenv'
+import { createServer } from 'http'
 
-import { errorHandler } from '@/middleware/error.middleware'
-import { logger } from '@/lib/logger'
-import authRoutes from '@/routes/auth.routes'
-import curriculumRoutes from '@/routes/curriculum.routes'
-import claudeRoutes from '@/routes/claude.routes'
+import { logger } from './lib/logger'
+import { testConnection } from './lib/supabase'
+import { initializeWebSocket } from './lib/websocket'
+import authRoutes from './routes/auth'
+import curriculumRoutes from './routes/curriculum'
+import claudeRoutes from './routes/claude'
 
 // 환경 변수 로드
 dotenv.config()
@@ -53,12 +55,18 @@ app.use((req, res, next) => {
 })
 
 // Health check
-app.get('/health', (req, res) => {
+app.get('/health', async (req, res) => {
+  const dbConnected = await testConnection()
+  
   res.status(200).json({
     status: 'OK',
     message: 'AI Curriculum Builder Backend is running',
     timestamp: new Date().toISOString(),
-    version: process.env.npm_package_version || '1.0.0'
+    version: process.env.npm_package_version || '1.0.0',
+    dependencies: {
+      supabase: dbConnected ? 'connected' : 'disconnected',
+      claude_api: process.env.ANTHROPIC_API_KEY ? 'configured' : 'not configured'
+    }
   })
 })
 
@@ -70,20 +78,71 @@ app.use('/api/claude', claudeRoutes)
 // 404 핸들러
 app.use('*', (req, res) => {
   res.status(404).json({
-    error: 'Endpoint not found',
-    message: `Cannot ${req.method} ${req.originalUrl}`
+    success: false,
+    error: {
+      code: 'ENDPOINT_NOT_FOUND',
+      message: `Cannot ${req.method} ${req.originalUrl}`
+    },
+    timestamp: new Date().toISOString()
   })
 })
 
-// 에러 핸들러 (마지막에 배치)
-app.use(errorHandler)
+// 에러 핸들러
+app.use((error: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  logger.error('Unhandled error:', error)
+  
+  res.status(500).json({
+    success: false,
+    error: {
+      code: 'INTERNAL_SERVER_ERROR',
+      message: 'Internal server error occurred'
+    },
+    timestamp: new Date().toISOString()
+  })
+})
+
+// HTTP 서버 및 WebSocket 설정
+const httpServer = createServer(app)
+const webSocketService = initializeWebSocket(httpServer)
 
 // 서버 시작
-app.listen(PORT, () => {
-  logger.info(`🚀 Server is running on port ${PORT}`)
-  logger.info(`📖 Health check: http://localhost:${PORT}/health`)
-  logger.info(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`)
-})
+async function startServer() {
+  try {
+    // 의존성 연결 테스트
+    logger.info('Testing dependencies...')
+    
+    const dbConnected = await testConnection()
+    if (!dbConnected) {
+      logger.warn('Supabase connection failed - some features may not work')
+    }
+    
+    if (!process.env.ANTHROPIC_API_KEY) {
+      logger.warn('Claude API key not configured - AI features will not work')
+    }
+    
+    // 서버 시작
+    httpServer.listen(PORT, () => {
+      logger.info(`🚀 Server is running on port ${PORT}`)
+      logger.info(`📖 Health check: http://localhost:${PORT}/health`)
+      logger.info(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`)
+      logger.info(`🔌 WebSocket enabled`)
+      
+      // 연결된 서비스 상태 로그
+      if (dbConnected) {
+        logger.info('✅ Supabase connected')
+      }
+      
+      if (process.env.ANTHROPIC_API_KEY) {
+        logger.info('✅ Claude API configured')
+      }
+    })
+  } catch (error) {
+    logger.error('Failed to start server:', error)
+    process.exit(1)
+  }
+}
+
+startServer()
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
