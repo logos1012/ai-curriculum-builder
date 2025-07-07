@@ -1,2 +1,11 @@
 export { default as CurriculumCard } from './CurriculumCard';
 export { default as ChatMessage } from './ChatMessage';
+export { CurriculumBuilder } from './CurriculumBuilder';
+export { ChatInterface } from './ChatInterface';
+export { CurriculumPreview } from './CurriculumPreview';
+export { MarkdownEditor } from './MarkdownEditor';
+export { VersionHistory } from './VersionHistory';
+export { CollaborativeUsers } from './CollaborativeUsers';
+export { SectionEditor } from './SectionEditor';
+export { ShareModal } from './ShareModal';
+export { TemplateLibrary } from './TemplateLibrary';

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Layout } from '@/components/layout';
 import { Button, Input, Card, CardHeader, CardTitle, CardContent, LoadingSpinner, Badge } from '@/components/ui';
-import { CurriculumCard } from '@/components/curriculum';
+import { CurriculumCard, TemplateLibrary } from '@/components/curriculum';
 import { useAuthStore } from '@/store/authStore';
 import { useCurriculumStore } from '@/store/curriculumStore';
 import { useToast } from '@/components/ui';
@@ -20,6 +20,7 @@ export default function Dashboard() {
     pagination,
     filters,
     fetchCurriculums, 
+    createCurriculum,
     deleteCurriculum, 
     duplicateCurriculum,
     setFilters,
@@ -27,6 +28,7 @@ export default function Dashboard() {
   } = useCurriculumStore();
 
   const [searchInput, setSearchInput] = useState(filters.search);
+  const [showTemplateLibrary, setShowTemplateLibrary] = useState(false);
 
   useEffect(() => {
     if (!isInitialized) return;
@@ -59,6 +61,26 @@ export default function Dashboard() {
 
   const handleCreateNew = () => {
     router.push('/builder');
+  };
+
+  const handleSelectTemplate = async (template: any) => {
+    try {
+      const result = await createCurriculum({
+        title: template.title,
+        description: template.description,
+        content: template.content,
+        type: template.type,
+        target_audience: template.targetAudience,
+        duration: template.duration
+      });
+      
+      if (result.success && result.id) {
+        success('템플릿으로 새 커리큘럼이 생성되었습니다');
+        router.push(`/builder/${result.id}`);
+      }
+    } catch (error) {
+      console.error('Failed to create curriculum from template:', error);
+    }
   };
 
   const handleEdit = (id: string) => {
@@ -112,9 +134,18 @@ export default function Dashboard() {
                 {pagination?.total || 0}개의 커리큘럼
               </p>
             </div>
-            <Button onClick={handleCreateNew} size="lg">
-              새 커리큘럼 만들기
-            </Button>
+            <div className="flex space-x-3">
+              <Button onClick={handleCreateNew} size="lg">
+                새 커리큘럼 만들기
+              </Button>
+              <Button 
+                onClick={() => setShowTemplateLibrary(true)} 
+                size="lg" 
+                variant="outline"
+              >
+                📚 템플릿 사용하기
+              </Button>
+            </div>
           </div>
 
           {/* Content */}
@@ -131,9 +162,14 @@ export default function Dashboard() {
               <p className="text-gray-600 mb-4">
                 AI와 함께 첫 번째 커리큘럼을 만들어보세요
               </p>
-              <Button onClick={handleCreateNew}>
-                새 커리큘럼 만들기
-              </Button>
+              <div className="flex space-x-3">
+                <Button onClick={handleCreateNew}>
+                  새 커리큘럼 만들기
+                </Button>
+                <Button onClick={() => setShowTemplateLibrary(true)} variant="outline">
+                  📚 템플릿 사용하기
+                </Button>
+              </div>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -150,6 +186,14 @@ export default function Dashboard() {
           )}
         </div>
       </div>
+
+      {/* Template Library Modal */}
+      {showTemplateLibrary && (
+        <TemplateLibrary
+          onSelectTemplate={handleSelectTemplate}
+          onClose={() => setShowTemplateLibrary(false)}
+        />
+      )}
     </Layout>
   );
 }

@@ -4,6 +4,9 @@ import { ReactNode, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Header } from './Header';
 import { Footer } from './Footer';
+import { ConnectionStatus } from '@/components/system/ConnectionStatus';
+import { GlobalErrorBoundary } from '@/components/system/GlobalErrorBoundary';
+import { EnvironmentCheck } from '@/components/system/EnvironmentCheck';
 import { useAuthStore } from '@/store/authStore';
 
 interface LayoutProps {
@@ -24,12 +27,16 @@ export function Layout({ children }: LayoutProps) {
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      <Header />
-      <main className="flex-1">
-        {children}
-      </main>
-      <Footer />
-    </div>
+    <GlobalErrorBoundary>
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <Header />
+        <main className="flex-1">
+          {children}
+        </main>
+        <Footer />
+        <ConnectionStatus />
+        <EnvironmentCheck />
+      </div>
+    </GlobalErrorBoundary>
   );
 }
