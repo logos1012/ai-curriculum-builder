@@ -7,9 +7,14 @@
 - [x] TRD.md 파일 생성 - 기술 요구사항 문서 정리
 - [x] TODOS.md 파일 생성 - 프로젝트 개발 단계별 작업 목록 작성
 - [x] 문서 업데이트 - Supabase 및 Docker 로컬 배포 반영
+- [x] 프로젝트 기본 구조 설계 및 기술 스택 확정
+- [x] 프론트엔드 프로젝트 초기 설정 (React/Next.js)
+- [x] 백엔드 프로젝트 초기 설정
+- [x] Supabase 프로젝트 설정 및 스키마 설계
+- [x] Docker 환경 구축
 
 ### 🚧 진행 중인 작업
-- [ ] 프로젝트 기본 구조 설계 및 기술 스택 확정
+- [ ] UI/UX 와이어프레임 작성
 
 ### 📝 예정된 작업
 
@@ -164,8 +169,8 @@
 - [ ] 클라우드 배포 준비 (향후 계획)
 
 ### 📈 진행률
-- 전체 진행률: 4/50+ 작업 완료 (약 8%)
-- Phase 1: 0/25 (0%)
+- 전체 진행률: 9/50+ 작업 완료 (약 18%)
+- Phase 1: 9/25 (36%)
 - Phase 2: 0/18 (0%)
 - Phase 3: 0/20 (0%)
 - Phase 4: 0/15 (0%)
@@ -177,3 +182,66 @@
 - 2025-07-07: 초기 TODO 리스트 작성
 - 2025-07-07: PRD.md, TRD.md 파일 생성 완료
 - 2025-07-07: Supabase 및 Docker 로컬 배포 환경으로 변경
+- 2025-07-07: 프로젝트 기본 구조 설계 및 문서화 완료
+- 2025-07-07: 프론트엔드 Next.js 14 프로젝트 초기 설정 완료
+- 2025-07-07: 백엔드 Node.js/Express 프로젝트 초기 설정 완료
+- 2025-07-07: Supabase 스키마 설계 및 마이그레이션 파일 작성 완료
+- 2025-07-07: Docker 환경 구축 및 개발 도구 설정 완료
+
+## 📋 상세 진행 현황
+
+### Phase 1: 프로젝트 설정 및 기본 구조 (9/25 완료 - 36%)
+
+#### ✅ 완료된 세부 작업:
+1. **문서화 작업**
+   - [x] PRD.md 파일 생성 - 5단계 구조로 정리
+   - [x] TRD.md 파일 생성 - 기술 요구사항 상세 정의
+   - [x] TODOS.md 파일 생성 - 체크리스트 기반 작업 관리
+   - [x] PROJECT_STRUCTURE.md 파일 생성 - 프로젝트 구조 문서화
+   - [x] Supabase 및 Docker 로컬 배포 환경 반영
+
+2. **프론트엔드 설정**
+   - [x] Next.js 14 프로젝트 생성 (TypeScript, Tailwind CSS, ESLint)
+   - [x] 프로젝트 디렉토리 구조 생성 (components, lib, hooks, store, types)
+   - [x] Supabase 클라이언트 설정 및 타입 정의
+   - [x] Claude API 클라이언트 설정
+   - [x] Zustand 상태 관리 설정
+   - [x] 유틸리티 함수 및 공통 타입 정의
+   - [x] 기본 레이아웃 및 메인 페이지 구현
+   - [x] Dockerfile 및 빌드 설정
+
+3. **백엔드 설정**
+   - [x] Node.js/Express 프로젝트 생성
+   - [x] TypeScript 설정 및 프로젝트 구조 생성
+   - [x] Supabase 연동 및 데이터베이스 타입 정의
+   - [x] Claude API 서비스 클래스 구현
+   - [x] Express 앱 설정 (미들웨어, 라우팅, 에러 핸들링)
+   - [x] 로깅 시스템 구축 (Winston)
+   - [x] Dockerfile 및 컨테이너 설정
+
+4. **데이터베이스 설계**
+   - [x] Supabase 프로젝트 설정 파일 작성
+   - [x] 데이터베이스 스키마 설계 (curriculums, chat_histories, curriculum_versions)
+   - [x] RLS(Row Level Security) 정책 설정
+   - [x] 마이그레이션 파일 작성
+   - [x] 샘플 데이터 작성
+
+5. **Docker 환경**
+   - [x] docker-compose.yml 파일 작성 (프로덕션용)
+   - [x] docker-compose.dev.yml 파일 작성 (개발용)
+   - [x] 프론트엔드/백엔드 Dockerfile 작성
+   - [x] .dockerignore 파일 설정
+   - [x] Makefile 개발 명령어 정의
+   - [x] README.md 업데이트 (Docker 사용법 포함)
+
+#### 🚧 현재 진행 중:
+- [ ] UI/UX 와이어프레임 작성
+
+#### 📝 다음 단계 (Phase 1 남은 작업):
+- [ ] Git 저장소 초기화 및 .gitignore 설정
+- [ ] 환경 변수 관리 문서화
+- [ ] 개발 환경 테스트 및 검증
+- [ ] API 엔드포인트 설계
+- [ ] 기본 컴포넌트 라이브러리 구축
+- [ ] 에러 처리 시스템 구현
+- [ ] 로컬 개발 환경 가이드 작성

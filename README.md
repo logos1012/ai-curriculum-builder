@@ -12,26 +12,92 @@
 
 ### 설치 및 실행
 
+#### 🚀 빠른 시작 (Docker 권장)
+
 1. **저장소 클론**
 ```bash
 git clone <repository-url>
 cd ai-curriculum-builder
 ```
 
-2. **환경 변수 설정**
+2. **초기 설정**
 ```bash
-cp .env.example .env
-# .env 파일을 편집하여 실제 값으로 수정
+make setup
+# 또는 수동으로:
+# cp .env.example .env
+# cd frontend && npm install
+# cd ../backend && npm install
 ```
 
-3. **Docker로 전체 스택 실행**
+3. **환경 변수 설정**
+`.env` 파일을 편집하여 실제 값으로 수정:
 ```bash
-docker-compose up -d
+# Supabase 설정
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_KEY=your_supabase_service_key
+
+# Claude API 설정
+ANTHROPIC_API_KEY=your_anthropic_api_key
 ```
 
-4. **애플리케이션 접속**
+4. **개발 환경 실행**
+```bash
+make dev
+# 또는
+docker-compose -f docker-compose.dev.yml up --build
+```
+
+5. **애플리케이션 접속**
 - Frontend: http://localhost:3000
 - Backend: http://localhost:4000
+- Health Check: http://localhost:4000/health
+
+#### 🛠️ 로컬 개발 (Docker 없이)
+
+```bash
+# 프론트엔드
+cd frontend && npm run dev
+
+# 백엔드 (별도 터미널)
+cd backend && npm run dev
+```
+
+## 🔧 개발 명령어
+
+프로젝트는 Makefile을 통해 편리한 개발 명령어를 제공합니다:
+
+```bash
+# 도움말
+make help
+
+# 개발 환경
+make dev          # 개발 환경 실행 (핫 리로딩)
+make dev-d        # 백그라운드 실행
+
+# 컨테이너 관리
+make up           # 프로덕션 환경 실행
+make down         # 컨테이너 중지 및 제거
+make restart      # 재시작
+
+# 로그 확인
+make logs         # 전체 로그
+make logs-frontend # 프론트엔드 로그
+make logs-backend  # 백엔드 로그
+
+# 개발 도구
+make shell-frontend # 프론트엔드 컨테이너 접속
+make shell-backend  # 백엔드 컨테이너 접속
+
+# 테스트 및 코드 품질
+make test         # 전체 테스트
+make lint         # 코드 린트 검사
+make lint-fix     # 린트 자동 수정
+
+# 상태 확인
+make status       # 컨테이너 상태
+make health       # 서비스 헬스 체크
+```
 
 ## 📁 프로젝트 구조
 
